@@ -3,8 +3,8 @@ import type { Metadata } from "next"
 import { LoginForm } from "@/components/auth/login-form"
 
 export const metadata: Metadata = {
-  title: "Connexion - PlasticDetect",
-  description: "Connectez-vous à votre compte PlasticDetect",
+  title: "Connexion - SatCap - Ocean",
+  description: "Connectez-vous à votre compte SatCap - Ocean",
 }
 
 export default function LoginPage() {

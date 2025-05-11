@@ -39,28 +39,50 @@ export function LoginForm() {
     },
   })
 
-  async function onSubmit(data: LoginFormValues) {
-    setIsLoading(true)
+async function onSubmit(data: LoginFormValues) {
+  setIsLoading(true);
 
+  try {
     const result = await signIn("credentials", {
       email: data.email,
       password: data.password,
       redirect: false,
-    })
-
-    setIsLoading(false)
+      callbackUrl: "/dashboard",
+      // Utiliser l'option remember
+      remember: data.remember,
+    });
 
     if (!result?.ok) {
-      return toast({
+      let errorMessage = "Email ou mot de passe incorrect";
+      
+      // Messages d'erreur plus spécifiques basés sur le code d'erreur
+      if (result?.error === "CredentialsSignin") {
+        errorMessage = "Les identifiants fournis sont incorrects";
+      }
+      
+      toast({
         title: "Erreur de connexion",
-        description: "Email ou mot de passe incorrect",
+        description: errorMessage,
         variant: "destructive",
-      })
+      });
+      return;
     }
 
-    router.push("/dashboard")
-    router.refresh()
+    // Rediriger vers le dashboard ou l'URL de callback
+    const callbackUrl = result.url || "/dashboard";
+    router.push(callbackUrl);
+    router.refresh();
+  } catch (error) {
+    console.error("Erreur de connexion:", error);
+    toast({
+      title: "Erreur de connexion",
+      description: "Une erreur s'est produite lors de la connexion",
+      variant: "destructive",
+    });
+  } finally {
+    setIsLoading(false);
   }
+}
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">

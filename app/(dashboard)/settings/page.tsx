@@ -9,7 +9,7 @@ import { authOptions } from "@/lib/auth"
 import { getUserById } from "@/lib/data"
 
 export const metadata: Metadata = {
-  title: "Paramètres - PlasticDetect",
+  title: "Paramètres - SatCap - Ocean",
   description: "Gérez vos paramètres et préférences",
 }
 

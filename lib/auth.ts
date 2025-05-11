@@ -1,17 +1,20 @@
-import { PrismaAdapter } from "@auth/prisma-adapter";
-import type { NextAuthOptions } from "next-auth";
+import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import bcryptjs from "bcryptjs"; // Remplacer bcrypt par bcryptjs
+import bcryptjs from "bcryptjs";
 
 import { db } from "@/lib/db";
 
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(db),
+  // Retirer l'adapter ou utiliser correctement PrismaAdapter avec stratégie database
+  // adapter: PrismaAdapter(db),
   session: {
     strategy: "jwt",
+    maxAge: 30 * 24 * 60 * 60, // 30 jours
   },
+  secret: process.env.NEXTAUTH_SECRET || "secret-de-fallback-a-changer-en-production",
   pages: {
     signIn: "/auth/login",
+    error: "/auth/error",
   },
   providers: [
     CredentialsProvider({
@@ -31,14 +34,14 @@ export const authOptions: NextAuthOptions = {
           },
         });
 
-        if (!user) {
+        if (!user || !user.password) {
           return null;
         }
 
         const isPasswordValid = await bcryptjs.compare(
           credentials.password,
           user.password
-        ); // Utiliser bcryptjs.compare
+        );
 
         if (!isPasswordValid) {
           return null;
@@ -56,32 +59,37 @@ export const authOptions: NextAuthOptions = {
     async session({ token, session }) {
       if (token) {
         session.user = session.user || {};
-        (session.user as any).id = token.id;
+        session.user.id = token.id as string;
         session.user.name = token.name;
         session.user.email = token.email;
       }
-
       return session;
     },
     async jwt({ token, user }) {
-      const dbUser = await db.user.findFirst({
-        where: {
-          email: token.email || undefined,
-        },
-      });
-
-      if (!dbUser) {
-        if (user) {
-          token.id = user.id;
-        }
-        return token;
+      if (user) {
+        token.id = user.id;
       }
+      
+      // Vérifier à chaque renouvellement de token que l'utilisateur existe toujours
+      if (token.email) {
+        const dbUser = await db.user.findUnique({
+          where: {
+            email: token.email,
+          },
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          }
+        });
 
-      return {
-        id: dbUser.id,
-        name: dbUser.name,
-        email: dbUser.email,
-      };
+        if (dbUser) {
+          token.id = dbUser.id;
+          token.name = dbUser.name;
+        }
+      }
+      
+      return token;
     },
   },
 };

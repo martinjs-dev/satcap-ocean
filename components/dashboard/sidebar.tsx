@@ -25,7 +25,7 @@ export function Sidebar() {
           <div className="h-8 w-8 bg-blue-600 rounded-md flex items-center justify-center text-white">
             <Database size={18} />
           </div>
-          <span className="font-bold text-gray-800">PlasticDetect</span>
+          <span className="font-bold text-gray-800">SatCap - Ocean</span>
         </div>
         <div className="space-y-1">
           {navItems.map((item) => (

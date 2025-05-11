@@ -5,7 +5,7 @@ import { HistoryFilters } from "@/components/history/history-filters"
 import { getAllDetections } from "@/lib/data"
 
 export const metadata: Metadata = {
-  title: "Historique - PlasticDetect",
+  title: "Historique - SatCap - Ocean",
   description: "Historique des détections de déchets plastiques",
 }
 

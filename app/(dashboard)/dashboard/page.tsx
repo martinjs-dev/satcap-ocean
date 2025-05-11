@@ -7,7 +7,7 @@ import { RecentDetections } from "@/components/dashboard/recent-detections"
 import { getDetectionStats, getRecentDetections } from "@/lib/data"
 
 export const metadata: Metadata = {
-  title: "Dashboard - PlasticDetect",
+  title: "Dashboard - SatCap - Ocean",
   description: "Tableau de bord pour la détection et l'analyse de déchets plastiques",
 }
 

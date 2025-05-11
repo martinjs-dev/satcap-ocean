@@ -9,9 +9,8 @@ import "@/app/globals.css"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "PlasticDetect - Détection de déchets plastiques",
+  title: "SatCap - Ocean - Détection de déchets plastiques",
   description: "Dashboard pour la détection et l'analyse de déchets plastiques dans l'eau",
-  generator: 'v0.dev'
 }
 
 export default function RootLayout({

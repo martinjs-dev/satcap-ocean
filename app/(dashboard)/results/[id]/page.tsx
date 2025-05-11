@@ -21,12 +21,12 @@ export async function generateMetadata({ params }: ResultsPageProps): Promise<Me
 
   if (!detection) {
     return {
-      title: "Résultat non trouvé - PlasticDetect",
+      title: "Résultat non trouvé - SatCap - Ocean",
     }
   }
 
   return {
-    title: `Résultat DT-${detection.id.substring(0, 4)} - PlasticDetect`,
+    title: `Résultat DT-${detection.id.substring(0, 4)} - SatCap - Ocean`,
     description: `Résultat de la détection de déchets plastiques du ${formatDate(detection.createdAt)}`,
   }
 }

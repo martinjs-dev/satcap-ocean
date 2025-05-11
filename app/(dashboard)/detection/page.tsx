@@ -3,7 +3,7 @@ import type { Metadata } from "next"
 import { UploadForm } from "@/components/detection/upload-form"
 
 export const metadata: Metadata = {
-  title: "Détection - PlasticDetect",
+  title: "Détection - SatCap - Ocean",
   description: "Téléchargez une image pour détecter les déchets plastiques",
 }
 

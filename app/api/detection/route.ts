@@ -90,7 +90,7 @@ export async function POST(req: Request) {
 
       // Recuperer l'id de l'utilisateur à partir de la session
       const user = await db.user.findUnique({
-        where: { email: session.user.email || undefined },
+        where: { email: session?.user?.email || undefined },
       })
 
       if (!user) {
