@@ -1,50 +1,69 @@
-"use client";
+"use client"
 
-import { useSearchParams } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import { useEffect, useState } from "react"
+import { Suspense } from "react"
+import { useSearchParams } from "next/navigation"
+import Link from "next/link"
+import { AlertCircle } from "lucide-react"
 
-export default function AuthErrorPage() {
-  const searchParams = useSearchParams();
-  const error = searchParams.get("error");
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { Button } from "@/components/ui/button"
 
-  const errorMessages = {
-    default: "Une erreur s'est produite lors de l'authentification.",
-    Signin: "Tentative de connexion échouée.",
-    OAuthSignin: "Tentative de connexion avec un fournisseur externe échouée.",
-    OAuthCallback:
-      "Erreur lors de la réponse du fournisseur d'authentification.",
-    OAuthCreateAccount:
-      "Erreur lors de la création du compte via le fournisseur.",
-    EmailCreateAccount: "Erreur lors de la création du compte avec cet email.",
-    Callback: "Erreur lors du processus d'authentification.",
-    OAuthAccountNotLinked:
-      "Cet email est déjà utilisé avec un autre fournisseur.",
-    EmailSignin: "Erreur lors de l'envoi de l'email de connexion.",
-    CredentialsSignin:
-      "Les identifiants fournis ne correspondent à aucun compte.",
-    SessionRequired: "Vous devez être connecté pour accéder à cette page.",
-  };
-
-  const errorMessage = errorMessages[error] || errorMessages.default;
+// Composant client qui utilise useSearchParams
+function ErrorContent() {
+  const searchParams = useSearchParams()
+  const [errorMessage, setErrorMessage] = useState<string>("")
+  
+  useEffect(() => {
+    const error = searchParams.get("error")
+    
+    // Traduire les codes d'erreur en messages utilisateur
+    if (error === "CredentialsSignin") {
+      setErrorMessage("Les identifiants fournis sont incorrects.")
+    } else if (error === "AccessDenied") {
+      setErrorMessage("Vous n'avez pas les permissions nécessaires pour accéder à cette ressource.")
+    } else if (error === "OAuthSignin" || error === "OAuthCallback" || error === "OAuthCreateAccount") {
+      setErrorMessage("Une erreur est survenue lors de l'authentification avec le fournisseur externe.")
+    } else if (error === "EmailCreateAccount" || error === "Callback" || error === "EmailSignin") {
+      setErrorMessage("Une erreur est survenue lors de l'authentification par email.")
+    } else if (error === "SessionRequired") {
+      setErrorMessage("Vous devez être connecté pour accéder à cette page.")
+    } else {
+      setErrorMessage("Une erreur inconnue est survenue lors de l'authentification.")
+    }
+  }, [searchParams])
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 p-4">
-      <div className="w-full max-w-md space-y-8 rounded-lg bg-white p-6 shadow-md">
-        <div className="text-center">
-          <h1 className="mt-6 text-3xl font-bold text-gray-900">
-            Erreur d'authentification
-          </h1>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            {errorMessage}
-          </p>
-        </div>
-        <div className="mt-8 flex justify-center">
-          <Button asChild className="w-full">
-            <Link href="/auth/login">Retour à la connexion</Link>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-4">
+      <div className="w-full max-w-md">
+        <Alert variant="destructive" className="mb-6">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Erreur d'authentification</AlertTitle>
+          <AlertDescription>{errorMessage}</AlertDescription>
+        </Alert>
+        
+        <div className="flex flex-col space-y-4">
+          <Button asChild>
+            <Link href="/auth/login">Retour à la page de connexion</Link>
+          </Button>
+          <Button variant="outline" asChild>
+            <Link href="/">Retour à l'accueil</Link>
           </Button>
         </div>
       </div>
     </div>
-  );
+  )
+}
+
+// Page principale avec Suspense
+export default function AuthErrorPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    }>
+      <ErrorContent />
+    </Suspense>
+  )
 }
